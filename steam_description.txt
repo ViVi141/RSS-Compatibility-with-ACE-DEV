@@ -1,3 +1,69 @@
-RSS × ACE-DEV 兼容层 — 将 ACE-DEV 医疗系统的生理状态桥接到 Realistic Stamina System，让受伤影响体力，治疗促进恢复。支持出血、疼痛、健康值、肾上腺素、美托洛尔、去氧肾上腺素、纳洛酮等药物效果的实时浓度映射。
+RSS × ACE-DEV Compatibility Layer
 
-RSS ↔ ACE-DEV compatibility layer. Bridges ACE-DEV medical states (bleeding, pain, health) and real-time drug concentrations (epinephrine, metoprolol, phenylephrine, naloxone) into RSS stamina system via PK/PD-based continuous model.
+Bridges ACE-DEV medical states and real-time drug concentrations into Realistic Stamina System. Injuries drain stamina; treatment accelerates recovery. All effects computed from the ACE-DEV PK/PD system — no hardcoded timers, no RSS source modification.
+
+=== FEATURES ===
+
+Injury → Stamina Drain
+• Bleeding: +0~40% stamina drain (oxygen carrying capacity loss)
+• Pain: +0~20% stamina drain when moving (motor efficiency reduction)  
+• Low Health: +0~30% stamina drain near death (systemic stress response)
+• Endogenous Catecholamines: automatic compensation — ~95% at light injury, ~40% at critical
+
+Medication → Stamina Effects (Real-time PK/PD Concentration Model)
+• Epinephrine: concentration-proportional stamina recovery + metabolic rebound penalty on decline
+• Morphine: pain suppression handled internally by ACE — bridge reads post-suppression pain values
+• Metoprolol (β-blocker): +0~15% stamina drain when moving (limited cardiac output)
+• Phenylephrine (vasopressor): +0~10% stamina drain (peripheral vasoconstriction)
+• Naloxone (opioid antagonist): mild additional stamina drain (withdrawal stress)
+
+Treatment → Stamina Recovery
+• Bleeding stopped: stamina recovery bonus proportional to bleeding reduction
+• Health restored: stamina recovery bonus proportional to health increase
+
+=== DESIGN PRINCIPLES ===
+
+• Zero modification to RSS or ACE-DEV source code — pure compatibility layer
+• Energy expenditure rate model: ACE effects expressed as multipliers on RSS base drain rate, not fixed values
+• Continuous PK/PD model: all drug effects computed from real-time blood concentration, naturally rising and metabolizing
+• Graceful degradation: all ACE type references use Cast() with null checks — layer is silent when ACE is absent
+• Affects all characters: players AND AI
+
+=== HOW IT WORKS ===
+
+ACE-DEV State                  Bridge Reads                 Stamina Impact
+─────────────────────────────────────────────────────────────────────────────────
+Bleeding GetTotalBleedingAmount() → 0-1 continuous         Drain +0-40%
+Pain GetPainIntensity()         → 0-1 (post-morphine)       Drain +0-20% (moving)
+Health GetHealthScaled()        → 0-1 continuous            Drain +0-30%
+Epinephrine PK conc. (nM)       → normalized 0-1             Recovery + decline penalty
+Metoprolol PK conc. (nM)        → normalized 0-1             Drain +0-15% (moving)
+Phenylephrine PK conc. (nM)     → normalized 0-1             Drain +0-10%
+Naloxone PK conc. (nM)          → normalized 0-1             Minor additional drain
+
+=== PROJECT STRUCTURE ===
+
+scripts/Game/RSS_ACE_Compat/
+  SCR_RSS_ACE_Constants.c    — Tuning constants (metabolic multipliers, drug baselines, thresholds)
+  SCR_RSS_ACE_Bridge.c       — ACE-DEV state reader with PK/PD concentration queries
+  SCR_RSS_ACE_PlayerBase.c   — Modded SCR_CharacterControllerComponent entry point (200ms monitoring loop)
+
+=== DEPENDENCIES ===
+
+• Realistic Stamina System (RSS) — required — AGPL-3.0
+• ACE-DEV (Advanced Combat Environment) — required — GPL-2.0
+
+=== COMPATIBILITY ===
+
+• Fully compatible with RSS combat stim (caffeine injection) — independent effects
+• All ACE-DEV medical items work normally (bandages, morphine, epinephrine, etc.)
+• Drug effects computed from ACE-DEV PK/PD system — no hardcoded timers
+• AI characters affected by ACE-DEV damage and medication
+
+=== LICENSE ===
+
+AGPL-3.0
+
+=== AUTHOR ===
+
+ViVi141
