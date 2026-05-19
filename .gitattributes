@@ -1,0 +1,22 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Enforce Script
+*.c text diff
+
+# Config
+*.gproj text
+*.conf text
+
+# Prose
+*.md text
+*.txt text
+
+# Binary
+*.rdb binary
+*.et binary
+*.fbx binary
+*.png binary
+*.jpg binary
+*.wav binary
+*.ogg binary

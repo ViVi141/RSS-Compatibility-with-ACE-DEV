@@ -1,0 +1,36 @@
+# Arma Reforger Workbench
+*.rdb
+*.gproj.lock
+*.gproj.user
+*.gproj.vsconfig
+*.suo
+*.sdf
+*.opensdf
+*.user
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ww]orkbench/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Build artifacts
+*.bikey
+*.pbo
+*.pak

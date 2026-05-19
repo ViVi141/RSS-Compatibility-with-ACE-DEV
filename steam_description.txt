@@ -1,0 +1,3 @@
+RSS × ACE-DEV 兼容层 — 将 ACE-DEV 医疗系统的生理状态桥接到 Realistic Stamina System，让受伤影响体力，治疗促进恢复。支持出血、疼痛、健康值、肾上腺素、美托洛尔、去氧肾上腺素、纳洛酮等药物效果的实时浓度映射。
+
+RSS ↔ ACE-DEV compatibility layer. Bridges ACE-DEV medical states (bleeding, pain, health) and real-time drug concentrations (epinephrine, metoprolol, phenylephrine, naloxone) into RSS stamina system via PK/PD-based continuous model.
